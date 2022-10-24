@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Delete, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
+import { timeStamp } from 'console';
 import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()
@@ -31,10 +32,14 @@ export class ReservaService {
     });
   }
 
+  async deleteById(data: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
+    return this.prisma.reserva.delete({ where: data });
+  }
+
   private verificaDatas(data: Prisma.ReservaCreateInput) {
     if (this.diasEntre(data.dataReserva) > 30) {
       throw new Error(
-        'A reserva não pode ser feita com mais de 30 dias de antecedência',
+        'Não é possivel fazer uma reserva com mais de 30 dias de antecedência',
       );
     } else if (this.diasEntre(data.dataReserva) < 0) {
       throw new Error(
@@ -44,15 +49,11 @@ export class ReservaService {
 
     if (data.tempoEstadia > 3 || data.tempoEstadia <= 0) {
       throw new Error(
-        'A estadia não pode ser maior que 3 dias ou menor ou igual a 0',
+        'Não é possivel ter uma estadia superior a 3 dias ou inferior a 1 dia',
       );
     }
 
     this.fazCheckinECheckout(data);
-  }
-
-  private verificaDisponibilidadeQuarto(quarto: Quarto) {
-    if (!quarto.disponibilidade) throw new Error('O quarto está indisponivel');
   }
 
   private fazCheckinECheckout(data: Prisma.ReservaCreateInput) {
@@ -62,6 +63,10 @@ export class ReservaService {
     data.checkout = new Date(
       reservaData.setDate(reservaData.getDate() + data.tempoEstadia),
     );
+  }
+
+  private verificaDisponibilidadeQuarto(quarto: Quarto) {
+    if (!quarto.disponibilidade) throw new Error('O quarto está indisponivel');
   }
 
   private diasEntre(dataReserva: Date | string): number {
