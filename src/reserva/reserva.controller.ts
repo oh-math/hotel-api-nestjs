@@ -1,6 +1,6 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { Reserva } from '@prisma/client';
-import { UsuariosService } from 'src/usuarios/usuarios.service';
+import { ReservaRequest } from './dto/reserva.request';
 import { ReservaService } from './reserva.service';
 
 @Controller('reserva')
@@ -9,9 +9,9 @@ export class ReservaController {
 
   @Post()
   async create(
-    @Body() data: { tempoEstadia: number; reserva: string, id: number },
+    @Body() data: ReservaRequest,
   ): Promise<Reserva> {
-    const { tempoEstadia, reserva, id} = data;
+    const { tempoEstadia, reserva, idUsuario, idQuarto} = data;
 
     const dataReserva = new Date(reserva)
     return this.reservaService.create({
@@ -19,7 +19,12 @@ export class ReservaController {
       dataReserva,
       Usuario: {
         connect: {
-          id: id
+          id: idUsuario
+        }
+      },
+      Quarto: {
+        connect:{
+          id: idQuarto
         }
       }
     });

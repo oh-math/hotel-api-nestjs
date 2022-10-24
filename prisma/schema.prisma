@@ -16,10 +16,10 @@ model Reserva {
   dataReserva DateTime
   checkin DateTime?
   checkout DateTime?
-  Usuario Usuario? @relation(fields: [userId], references: [id])
-  Quarto Quarto? @relation(fields: [quartoId], references: [id])
-  quartoId Int? @unique
-  userId Int? @unique 
+  Usuario Usuario @relation(fields: [userId], references: [id])
+  Quarto Quarto @relation(fields: [quartoId], references: [id])
+  quartoId Int @unique
+  userId Int @unique 
 
   @@map("reservas")
 }
@@ -27,7 +27,7 @@ model Reserva {
 model Quarto {
   id Int @id @default(autoincrement())
   disponibilidade Boolean
-  numeroDoQuarto Int
+  numeroDoQuarto Int @unique
   reserva Reserva?
 
   @@map("quartos")

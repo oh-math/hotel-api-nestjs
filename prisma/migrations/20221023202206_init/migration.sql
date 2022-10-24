@@ -5,8 +5,8 @@ CREATE TABLE `reservas` (
     `dataReserva` DATETIME(3) NOT NULL,
     `checkin` DATETIME(3) NULL,
     `checkout` DATETIME(3) NULL,
-    `quartoId` INTEGER NULL,
-    `userId` INTEGER NULL,
+    `quartoId` INTEGER NOT NULL,
+    `userId` INTEGER NOT NULL,
 
     UNIQUE INDEX `reservas_quartoId_key`(`quartoId`),
     UNIQUE INDEX `reservas_userId_key`(`userId`),
@@ -19,6 +19,7 @@ CREATE TABLE `quartos` (
     `disponibilidade` BOOLEAN NOT NULL,
     `numeroDoQuarto` INTEGER NOT NULL,
 
+    UNIQUE INDEX `quartos_numeroDoQuarto_key`(`numeroDoQuarto`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -33,7 +34,7 @@ CREATE TABLE `usuarios` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `reservas` ADD CONSTRAINT `reservas_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `usuarios`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `reservas` ADD CONSTRAINT `reservas_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `usuarios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `reservas` ADD CONSTRAINT `reservas_quartoId_fkey` FOREIGN KEY (`quartoId`) REFERENCES `quartos`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `reservas` ADD CONSTRAINT `reservas_quartoId_fkey` FOREIGN KEY (`quartoId`) REFERENCES `quartos`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
