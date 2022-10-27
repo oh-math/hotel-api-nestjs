@@ -1,5 +1,6 @@
 import { Delete, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
+import { NotFoundError } from '@prisma/client/runtime';
 import { timeStamp } from 'console';
 import { PrismaService } from 'src/database/PrismaService';
 
@@ -34,6 +35,20 @@ export class ReservaService {
 
   async deleteById(data: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
     return this.prisma.reserva.delete({ where: data });
+  }
+
+  async getById(
+    reservaUnica: Prisma.ReservaWhereUniqueInput,
+  ): Promise<Reserva> {
+    const reserva = await this.prisma.reserva.findUnique({
+      where: reservaUnica,
+    });
+
+    if (!reserva) {
+      throw new NotFoundError('Reserva não encontrado');
+    }
+
+    return reserva;
   }
 
   private verificaDatas(data: Prisma.ReservaCreateInput) {

@@ -2,7 +2,7 @@ import { IsNotEmpty, IsPositive } from "class-validator"
 
 export class QuartoRequest {
     @IsNotEmpty()
-    disponibilidade: boolean
+    disponibilidade?: boolean
     @IsPositive()
     numeroDoQuarto: number
 }

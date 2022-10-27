@@ -10,8 +10,8 @@ export class QuartosService {
 
   async create(data: Prisma.QuartoCreateInput): Promise<Quarto> {
     return this.prisma.quarto.create({
-        data,
-    })
+      data,
+    });
   }
 
   async findOne(quartoUnico: Prisma.QuartoWhereUniqueInput): Promise<Quarto> {
@@ -24,5 +24,9 @@ export class QuartosService {
     }
 
     return quarto;
+  }
+
+  async findMany(): Promise<Quarto[]> {
+    return this.prisma.quarto.findMany();
   }
 }

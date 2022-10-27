@@ -16,7 +16,7 @@ CREATE TABLE `reservas` (
 -- CreateTable
 CREATE TABLE `quartos` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `disponibilidade` BOOLEAN NOT NULL,
+    `disponibilidade` BOOLEAN NULL DEFAULT true,
     `numeroDoQuarto` INTEGER NOT NULL,
 
     UNIQUE INDEX `quartos_numeroDoQuarto_key`(`numeroDoQuarto`),

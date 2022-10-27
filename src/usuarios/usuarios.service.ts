@@ -14,7 +14,7 @@ export class UsuariosService {
     });
   }
 
-  async findOne(
+  async getById(
     usuarioUnico: Prisma.UsuarioWhereUniqueInput,
   ): Promise<Usuario> {
     const usuario = await this.prisma.usuario.findUnique({

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Quarto } from '@prisma/client';
 import { QuartoRequest } from './dto/quartos.request';
 import { QuartosService } from './quartos.service';
@@ -15,5 +15,10 @@ export class QuartosController {
       disponibilidade,
       numeroDoQuarto,
     });
+  }
+
+  @Get()
+  async findMany(): Promise<Quarto[]> {
+    return this.quartosService.findMany()
   }
 }

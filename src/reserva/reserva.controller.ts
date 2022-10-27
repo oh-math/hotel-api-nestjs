@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { Prisma, Reserva } from '@prisma/client';
 import { ReservaRequest } from './dto/reserva.request';
 import { ReservaService } from './reserva.service';
@@ -31,5 +31,10 @@ export class ReservaController {
   @Delete(':id')
   async deleteById(@Param('id') id: string): Promise<Reserva> {
     return this.reservaService.deleteById({ id: Number(id) });
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: string) {
+    return this.reservaService.getById({ id: Number(id) });
   }
 }
