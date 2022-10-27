@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsPositive } from "class-validator"
 
-export class QuartoRequest {
+export class CreateQuartoRequest {
     @IsNotEmpty()
     disponibilidade?: boolean
     @IsPositive()

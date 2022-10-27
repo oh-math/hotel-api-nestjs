@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, Quarto } from '@prisma/client';
 import { NotFoundError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/database/PrismaService';
-import { QuartoRequest } from './dto/quartos.request';
 
 @Injectable()
 export class QuartosService {
@@ -28,5 +27,18 @@ export class QuartosService {
 
   async findMany(): Promise<Quarto[]> {
     return this.prisma.quarto.findMany();
+  }
+
+  async updateOne(
+    data: Prisma.QuartoWhereUniqueInput,
+  ): Promise<Quarto> {
+    return this.prisma.quarto.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        disponibilidade: true,
+      },
+    });
   }
 }
