@@ -9,10 +9,9 @@ export class QuartosController {
 
   @Post()
   async create(@Body() data: CreateQuartoRequest): Promise<Quarto> {
-    const { disponibilidade, numeroDoQuarto } = data;
+    const {numeroDoQuarto } = data;
 
     return this.quartosService.create({
-      disponibilidade,
       numeroDoQuarto,
     });
   }

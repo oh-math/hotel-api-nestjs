@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
-import { NotFoundError } from '@prisma/client/runtime';
+import { assert } from 'console';
 import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()
@@ -27,18 +27,28 @@ export class ReservaService {
       },
     });
 
+
+    assert(data)
     return this.prisma.reserva.create({
       data,
     });
   }
 
-  async deleteById(
-    data: Prisma.ReservaWhereUniqueInput,
-  ) {
-     await this.prisma.reserva.delete({
+  async deleteById(data: Prisma.ReservaWhereUniqueInput) {
+    const reserva = await this.prisma.reserva.findFirst({
       where: {
         id: data.id,
-      }, 
+      },
+    });
+
+    if (!reserva) {
+      throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    await this.prisma.reserva.delete({
+      where: {
+        id: data.id,
+      },
     });
   }
 
@@ -50,26 +60,31 @@ export class ReservaService {
     });
 
     if (!reserva) {
-      throw new NotFoundError('Reserva não encontrado');
+      throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
     }
 
     return reserva;
   }
 
+  // ===================================== metodos do negocio =====================================
+
   private verificaDatas(data: Prisma.ReservaCreateInput) {
     if (this.diasEntre(data.dataReserva) > 30) {
-      throw new Error(
+      throw new HttpException(
         'Não é possivel fazer uma reserva com mais de 30 dias de antecedência',
+        HttpStatus.BAD_REQUEST,
       );
     } else if (this.diasEntre(data.dataReserva) < 0) {
-      throw new Error(
+      throw new HttpException(
         'Não é possivel fazer uma reserva no passado ou do dia atual',
+        HttpStatus.BAD_REQUEST,
       );
     }
 
     if (data.tempoEstadia > 3 || data.tempoEstadia <= 0) {
-      throw new Error(
+      throw new HttpException(
         'Não é possivel ter uma estadia superior a 3 dias ou inferior a 1 dia',
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -86,7 +101,11 @@ export class ReservaService {
   }
 
   private verificaDisponibilidadeQuarto(quarto: Quarto) {
-    if (!quarto.disponibilidade) throw new Error('O quarto está indisponivel');
+    if (!quarto.disponibilidade)
+      throw new HttpException(
+        'O quarto está indisponivel',
+        HttpStatus.BAD_REQUEST,
+      );
   }
 
   private diasEntre(dataReserva: Date | string): number {

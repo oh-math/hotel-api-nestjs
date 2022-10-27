@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto } from '@prisma/client';
 import { NotFoundError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/database/PrismaService';
@@ -19,7 +19,7 @@ export class QuartosService {
     });
 
     if (!quarto) {
-      throw new NotFoundError('Usuario não encontrado');
+      throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND);
     }
 
     return quarto;

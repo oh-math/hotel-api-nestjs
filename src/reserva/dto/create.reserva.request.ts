@@ -1,6 +1,7 @@
+import { Prisma } from '@prisma/client';
 import { IsNotEmpty } from 'class-validator';
 
-export class ReservaRequest {
+export class ReservaCreateRequest {
   @IsNotEmpty()
   tempoEstadia: number;
   @IsNotEmpty()
