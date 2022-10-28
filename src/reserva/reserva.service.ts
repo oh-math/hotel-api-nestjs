@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
 import { retry } from 'rxjs';
 import { PrismaService } from 'src/database/PrismaService';
+import { ReservaCreateRequest } from './dto/create.reserva.request';
+import { ReservaUpdateRequest } from './dto/update.reserva.request';
 
 @Injectable()
 export class ReservaService {
@@ -34,6 +36,26 @@ export class ReservaService {
 
   // --------------------------------------------------------------------------
 
+  // async updateById(
+  //   reserva: Prisma.ReservaWhereUniqueInput,
+  //   reservaDTO: ReservaUpdateRequest,
+  // ): Promise<Reserva> {
+  //   const reservaEncontrada = await this.prisma.reserva.findUnique({
+  //     where: {
+  //       id: reserva.id,
+  //     },
+  //   });
+
+  //   return this.prisma.reserva.update({
+  //     where: {
+  //       id: reservaEncontrada.id,
+  //     },
+  //     data: reservaDTO,
+  //   });
+  // }
+
+  // --------------------------------------------------------------------------
+
   async deleteById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
     const reservaID = await this.prisma.reserva.findUnique({
       where: reserva,
@@ -51,7 +73,6 @@ export class ReservaService {
 
     return reservaDeletada;
   }
-
   // --------------------------------------------------------------------------
 
   async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
@@ -70,6 +91,7 @@ export class ReservaService {
 
   async findMany(): Promise<Reserva[]> {
     const todasReservas = await this.prisma.reserva.findMany();
+
     if (todasReservas.length === 0) {
       throw new HttpException('', HttpStatus.NO_CONTENT);
     }

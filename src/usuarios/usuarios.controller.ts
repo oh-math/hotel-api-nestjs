@@ -12,13 +12,13 @@ export class UsuariosController {
     return this.usuariosService.create(usuario);
   }
 
-  @Get('usuario:id')
+  @Get('usuario/:id')
   async findById(@Param('id') id: number): Promise<Usuario> {
     return this.usuariosService.findById({ id: id });
   }
 
-  @Get('usuario/usuarios')
-  async name(): Promise<Usuario[]> {
+  @Get('usuario')
+  async findMany(): Promise<Usuario[]> {
     return this.usuariosService.findMany()
   }
 }

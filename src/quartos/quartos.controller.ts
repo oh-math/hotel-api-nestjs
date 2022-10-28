@@ -9,7 +9,7 @@ export class QuartosController {
 
   @Post('quarto')
   async create(@Body() data: CreateQuartoRequest): Promise<Quarto> {
-    const {numeroDoQuarto } = data;
+    const { numeroDoQuarto } = data;
 
     return this.quartosService.create({
       numeroDoQuarto,
@@ -21,13 +21,13 @@ export class QuartosController {
     return this.quartosService.findById({ id: id });
   }
 
-  @Get('quarto/quartos')
-  async findMany(): Promise<Quarto[]> {
-    return this.quartosService.findMany();
-  }
-
   @Put('quarto/:id')
   async updateByNumeroDoQuarto(@Param('id') id: number): Promise<Quarto> {
-    return this.quartosService.updateOne({id: id});
+    return this.quartosService.updateOne({ id: id });
+  }
+  
+  @Get('quarto')
+  async findMany(): Promise<Quarto[]> {
+    return this.quartosService.findMany();
   }
 }
