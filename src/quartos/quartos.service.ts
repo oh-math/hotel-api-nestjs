@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto } from '@prisma/client';
-import { NotFoundError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()

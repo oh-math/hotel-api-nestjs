@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Usuario } from '@prisma/client';
 import { cpf } from 'cpf-cnpj-validator';
 import { PrismaService } from 'src/database/PrismaService';
-import { UsuarioRequest } from './dto/create.usuario.request';
 
 @Injectable()
 export class UsuariosService {

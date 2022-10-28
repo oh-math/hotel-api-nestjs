@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
-import { retry } from 'rxjs';
 import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()
