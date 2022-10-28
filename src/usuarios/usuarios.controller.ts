@@ -3,17 +3,22 @@ import { Usuario } from '@prisma/client';
 import { UsuarioRequest } from './dto/create.usuario.request';
 import { UsuariosService } from './usuarios.service';
 
-@Controller('usuarios')
+@Controller()
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
-  @Post()
-  async create(@Body() data: UsuarioRequest) {
-    return this.usuariosService.create(data);
+  @Post('usuario')
+  async create(@Body() usuario: UsuarioRequest): Promise<Usuario> {
+    return this.usuariosService.create(usuario);
   }
 
-  @Get(':id')
-  async findById(@Param('id') id: string): Promise<Usuario> {
-    return this.usuariosService.getById({ id: Number(id) });
+  @Get('usuario:id')
+  async findById(@Param('id') id: number): Promise<Usuario> {
+    return this.usuariosService.findById({ id: id });
+  }
+
+  @Get('usuario/usuarios')
+  async name(): Promise<Usuario[]> {
+    return this.usuariosService.findMany()
   }
 }

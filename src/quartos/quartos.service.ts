@@ -13,7 +13,7 @@ export class QuartosService {
     });
   }
 
-  async findOne(quartoUnico: Prisma.QuartoWhereUniqueInput): Promise<Quarto> {
+  async findById(quartoUnico: Prisma.QuartoWhereUniqueInput): Promise<Quarto> {
     const quarto = await this.prisma.quarto.findUnique({
       where: quartoUnico,
     });

@@ -3,11 +3,11 @@ import { Quarto } from '@prisma/client';
 import { CreateQuartoRequest } from './dto/create.quartos.request';
 import { QuartosService } from './quartos.service';
 
-@Controller('quartos')
+@Controller()
 export class QuartosController {
   constructor(private readonly quartosService: QuartosService) {}
 
-  @Post()
+  @Post('quarto')
   async create(@Body() data: CreateQuartoRequest): Promise<Quarto> {
     const {numeroDoQuarto } = data;
 
@@ -16,18 +16,18 @@ export class QuartosController {
     });
   }
 
-  @Get(':id')
-  async findByID(@Param('id') id: string): Promise<Quarto> {
-    return this.quartosService.findOne({ id: Number(id) });
+  @Get('quarto/:id')
+  async findByID(@Param('id') id: number): Promise<Quarto> {
+    return this.quartosService.findById({ id: id });
   }
 
-  @Get()
+  @Get('quarto/quartos')
   async findMany(): Promise<Quarto[]> {
     return this.quartosService.findMany();
   }
 
-  @Put(':id')
-  async updateByNumeroDoQuarto(@Param('id') id: string): Promise<Quarto> {
-    return this.quartosService.updateOne({id: Number(id)});
+  @Put('quarto/:id')
+  async updateByNumeroDoQuarto(@Param('id') id: number): Promise<Quarto> {
+    return this.quartosService.updateOne({id: id});
   }
 }
