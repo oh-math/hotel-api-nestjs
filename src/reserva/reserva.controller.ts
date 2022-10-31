@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { Reserva } from '@prisma/client';
 import { ReservaCreateRequest } from './dto/create.reserva.request';
@@ -37,17 +38,16 @@ export class ReservaController {
     });
   }
 
-  // @Patch('reserva/:id')
-  // async updateByID(
-  //   @Param('id') id: number,
-  //   @Body()
-  //   reservaDTO: ReservaUpdateRequest,
-  // ): Promise<Reserva> {
-  //   return this.reservaService.updateById(
-  //     { id: id },
-  //     reservaDTO
-  //   );
-  // }
+  @Patch('reserva/:id')
+  async updateByID(
+    @Param('id') id: number,
+    @Body()
+    reservaDTO: ReservaUpdateRequest,
+  ): Promise<Reserva> {
+
+    reservaDTO.dataReserva = new Date(reservaDTO.dataReserva)
+    return this.reservaService.updateById({id: id}, reservaDTO)
+  }
 
   @Delete('reserva/:id')
   async deleteById(@Param('id') id: number): Promise<Reserva> {

@@ -36,23 +36,23 @@ export class ReservaService {
 
   // --------------------------------------------------------------------------
 
-  // async updateById(
-  //   reserva: Prisma.ReservaWhereUniqueInput,
-  //   reservaDTO: ReservaUpdateRequest,
-  // ): Promise<Reserva> {
-  //   const reservaEncontrada = await this.prisma.reserva.findUnique({
-  //     where: {
-  //       id: reserva.id,
-  //     },
-  //   });
+  async updateById(
+    reserva: Prisma.ReservaWhereUniqueInput,
+    reservaDTO: Prisma.ReservaUpdateInput,
+  ): Promise<Reserva> {
+    const reservaEncontrada = await this.prisma.reserva.findUnique({
+      where: {
+        id: reserva.id,
+      },
+    });
 
-  //   return this.prisma.reserva.update({
-  //     where: {
-  //       id: reservaEncontrada.id,
-  //     },
-  //     data: reservaDTO,
-  //   });
-  // }
+    return this.prisma.reserva.update({
+      where: {
+        id: reservaEncontrada.id,
+      },
+      data: reservaDTO,
+    });
+  }
 
   // --------------------------------------------------------------------------
 
