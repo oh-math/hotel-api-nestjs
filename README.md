@@ -9,13 +9,13 @@ A API por hora não possui segurança.
 - Typescript 4.8.4
 - NestJS como framework para desenvolvimento da API
 - Prisma como ORM
-- NPM como gerenciador de depnedências
+- NPM como gerenciador de dependências
 
 ## A arquitetura usada 
 
-A arquitetura usada é a padrão de uso do NestJS, com a separação de entidades pelos seus modulos.
+A arquitetura usada é a padrão de uso do NestJS, com a separação de entidades pelos seus módulos.
 
-![Database](https://ibb.co/vv9LvCT)
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/Fqp8qky/Captura-de-tela-de-2022-10-31-15-09-37.png" alt="Captura-de-tela-de-2022-10-31-15-09-37" border="0"></a>
 
 ### Rodando o projeto localmente
 
