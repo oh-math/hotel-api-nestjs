@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { Usuario } from '@prisma/client';
 import { UsuarioRequest } from './dto/create.usuario.request';
 import { UsuariosService } from './usuarios.service';
@@ -19,6 +19,11 @@ export class UsuariosController {
 
   @Get('usuario')
   async findMany(): Promise<Usuario[]> {
-    return this.usuariosService.findMany()
+    return this.usuariosService.findMany();
+  }
+
+  @Delete('usuario/:id')
+  async deleteById(@Param('id') id: number): Promise<Usuario> {
+    return this.usuariosService.deleteById({ id: id });
   }
 }

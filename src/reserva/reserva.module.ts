@@ -6,7 +6,6 @@ import { PrismaService } from 'src/database/PrismaService';
 
 @Module({
   controllers: [ReservaController],
-  providers: [PrismaService, ReservaService]
-  
+  providers: [PrismaService, ReservaService],
 })
 export class ReservaModule {}

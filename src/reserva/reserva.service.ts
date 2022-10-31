@@ -36,6 +36,31 @@ export class ReservaService {
 
   // --------------------------------------------------------------------------
 
+  async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
+    const reservaUnica = await this.prisma.reserva.findUnique({
+      where: reserva,
+    });
+
+    if (!reservaUnica) {
+      throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    return reservaUnica;
+  }
+
+  // --------------------------------------------------------------------------
+
+  async findMany(): Promise<Reserva[]> {
+    const todasReservas = await this.prisma.reserva.findMany();
+
+    if (todasReservas.length === 0) {
+      throw new HttpException('', HttpStatus.NO_CONTENT);
+    }
+    return todasReservas;
+  }
+
+  // --------------------------------------------------------------------------
+
   async updateById(
     reserva: Prisma.ReservaWhereUniqueInput,
     reservaDTO: Prisma.ReservaUpdateInput,
@@ -74,30 +99,6 @@ export class ReservaService {
     });
 
     return reservaDeletada;
-  }
-  // --------------------------------------------------------------------------
-
-  async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
-    const reservaUnica = await this.prisma.reserva.findUnique({
-      where: reserva,
-    });
-
-    if (!reservaUnica) {
-      throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
-    }
-
-    return reservaUnica;
-  }
-
-  // --------------------------------------------------------------------------
-
-  async findMany(): Promise<Reserva[]> {
-    const todasReservas = await this.prisma.reserva.findMany();
-
-    if (todasReservas.length === 0) {
-      throw new HttpException('', HttpStatus.NO_CONTENT);
-    }
-    return todasReservas;
   }
 
   // ===================================== metodos do negocio =====================================

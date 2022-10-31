@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { Reserva } from '@prisma/client';
 import { ReservaCreateRequest } from './dto/create.reserva.request';
@@ -38,22 +37,6 @@ export class ReservaController {
     });
   }
 
-  @Patch('reserva/:id')
-  async updateByID(
-    @Param('id') id: number,
-    @Body()
-    reservaDTO: ReservaUpdateRequest,
-  ): Promise<Reserva> {
-
-    reservaDTO.dataReserva = new Date(reservaDTO.dataReserva)
-    return this.reservaService.updateById({id: id}, reservaDTO)
-  }
-
-  @Delete('reserva/:id')
-  async deleteById(@Param('id') id: number): Promise<Reserva> {
-    return this.reservaService.deleteById({ id: id });
-  }
-
   @Get('reserva/:id')
   async findById(@Param('id') id: number): Promise<Reserva> {
     return this.reservaService.findById({ id: id });
@@ -62,5 +45,20 @@ export class ReservaController {
   @Get('reserva')
   async findMany(): Promise<Reserva[]> {
     return this.reservaService.findMany();
+  }
+
+  @Patch('reserva/:id')
+  async updateByID(
+    @Param('id') id: number,
+    @Body()
+    reservaDTO: ReservaUpdateRequest,
+  ): Promise<Reserva> {
+    reservaDTO.dataReserva = new Date(reservaDTO.dataReserva);
+    return this.reservaService.updateById({ id: id }, reservaDTO);
+  }
+
+  @Delete('reserva/:id')
+  async deleteById(@Param('id') id: number): Promise<Reserva> {
+    return this.reservaService.deleteById({ id: id });
   }
 }
