@@ -40,6 +40,8 @@ export class ReservaService {
     reserva: Prisma.ReservaWhereUniqueInput,
     reservaDTO: Prisma.ReservaUpdateInput,
   ): Promise<Reserva> {
+    this.verificaDatas(reservaDTO);
+
     const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: {
         id: reserva.id,
@@ -100,7 +102,9 @@ export class ReservaService {
 
   // ===================================== metodos do negocio =====================================
 
-  private verificaDatas(reserva: Prisma.ReservaCreateInput) {
+  private verificaDatas(
+    reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
+  ) {
     if (this.diasEntre(reserva.dataReserva) > 30) {
       throw new HttpException(
         'Não é possivel fazer uma reserva com mais de 30 dias de antecedência',
@@ -125,16 +129,17 @@ export class ReservaService {
 
   // --------------------------------------------------------------------------
 
-  private fazCheckinECheckout(reserva: Prisma.ReservaCreateInput) {
-    let covertidoParaData = new Date(reserva.dataReserva);
+  private fazCheckinECheckout(
+    reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
+  ) {
+    let covertidoParaData = new Date(reserva.dataReserva.toString());
+    let estadiaNumero = <number>reserva.tempoEstadia;
 
     reserva.checkin = new Date(
       covertidoParaData.setDate(covertidoParaData.getDate() + 1),
     );
     reserva.checkout = new Date(
-      covertidoParaData.setDate(
-        covertidoParaData.getDate() + reserva.tempoEstadia,
-      ),
+      covertidoParaData.setDate(covertidoParaData.getDate() + estadiaNumero),
     );
   }
 
@@ -148,7 +153,9 @@ export class ReservaService {
 
   // --------------------------------------------------------------------------
 
-  private diasEntre(dataReserva: Date | string): number {
+  private diasEntre(
+    dataReserva: string | Date | Prisma.DateTimeFieldUpdateOperationsInput,
+  ): number {
     const dataAtual = new Date();
 
     let contador;

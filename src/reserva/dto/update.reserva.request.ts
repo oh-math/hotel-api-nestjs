@@ -1,4 +1,3 @@
-import { Quarto, Usuario } from "@prisma/client";
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 
