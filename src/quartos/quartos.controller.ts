@@ -17,8 +17,8 @@ export class QuartosController {
   constructor(private readonly quartosService: QuartosService) {}
 
   @Post('quarto')
-  async create(@Body() data: CreateQuartoRequest): Promise<Quarto> {
-    const { numeroDoQuarto } = data;
+  async create(@Body() quarto: CreateQuartoRequest): Promise<Quarto> {
+    const { numeroDoQuarto } = quarto;
 
     return this.quartosService.create({
       numeroDoQuarto,

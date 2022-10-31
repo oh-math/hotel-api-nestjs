@@ -12,7 +12,7 @@ export class ReservaService {
   async create(reserva: Prisma.ReservaCreateInput): Promise<Reserva> {
     this.verificaDatas(reserva);
 
-    const quartoEncontrado = await this.prisma.quarto.findFirst({
+    const quartoEncontrado = await this.prisma.quarto.findUnique({
       where: {
         id: reserva.Quarto.connect.id,
       },
@@ -34,21 +34,17 @@ export class ReservaService {
     });
   }
 
-  // --------------------------------------------------------------------------
-
   async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
-    const reservaUnica = await this.prisma.reserva.findUnique({
+    const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: reserva,
     });
 
-    if (!reservaUnica) {
+    if (!reservaEncontrada) {
       throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
     }
 
-    return reservaUnica;
+    return reservaEncontrada;
   }
-
-  // --------------------------------------------------------------------------
 
   async findMany(): Promise<Reserva[]> {
     const todasReservas = await this.prisma.reserva.findMany();
@@ -59,13 +55,11 @@ export class ReservaService {
     return todasReservas;
   }
 
-  // --------------------------------------------------------------------------
-
   async updateById(
     reserva: Prisma.ReservaWhereUniqueInput,
-    reservaDTO: Prisma.ReservaUpdateInput,
+    reservaAtualizada: Prisma.ReservaUpdateInput,
   ): Promise<Reserva> {
-    this.verificaDatas(reservaDTO);
+    this.verificaDatas(reservaAtualizada);
 
     const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: {
@@ -73,28 +67,28 @@ export class ReservaService {
       },
     });
 
+    if(!reservaEncontrada)
+
     return this.prisma.reserva.update({
       where: {
         id: reservaEncontrada.id,
       },
-      data: reservaDTO,
+      data: reservaAtualizada,
     });
   }
 
-  // --------------------------------------------------------------------------
-
   async deleteById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
-    const reservaID = await this.prisma.reserva.findUnique({
+    const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: reserva,
     });
 
-    if (!reservaID) {
+    if (!reservaEncontrada) {
       throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
     }
 
     const reservaDeletada = await this.prisma.reserva.delete({
       where: {
-        id: reservaID.id,
+        id: reservaEncontrada.id,
       },
     });
 
@@ -128,8 +122,6 @@ export class ReservaService {
     this.fazCheckinECheckout(reserva);
   }
 
-  // --------------------------------------------------------------------------
-
   private fazCheckinECheckout(
     reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
   ) {
@@ -151,8 +143,6 @@ export class ReservaService {
         HttpStatus.BAD_REQUEST,
       );
   }
-
-  // --------------------------------------------------------------------------
 
   private diasEntre(
     dataReserva: string | Date | Prisma.DateTimeFieldUpdateOperationsInput,
