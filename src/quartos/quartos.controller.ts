@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { Quarto } from '@prisma/client';
 import { CreateQuartoRequest } from './dto/create.quartos.request';
 import { QuartosService } from './quartos.service';
@@ -8,8 +17,8 @@ export class QuartosController {
   constructor(private readonly quartosService: QuartosService) {}
 
   @Post('quarto')
-  async create(@Body() data: CreateQuartoRequest): Promise<Quarto> {
-    const {numeroDoQuarto } = data;
+  async create(@Body() quarto: CreateQuartoRequest): Promise<Quarto> {
+    const { numeroDoQuarto } = quarto;
 
     return this.quartosService.create({
       numeroDoQuarto,
@@ -21,13 +30,20 @@ export class QuartosController {
     return this.quartosService.findById({ id: id });
   }
 
-  @Get('quarto/quartos')
+  @Get('quarto')
   async findMany(): Promise<Quarto[]> {
     return this.quartosService.findMany();
   }
 
-  @Put('quarto/:id')
-  async updateByNumeroDoQuarto(@Param('id') id: number): Promise<Quarto> {
-    return this.quartosService.updateOne({id: id});
+  @Patch('quarto/:numeroDoQuarto')
+  async updateByNumeroDoQuarto(
+    @Param('numeroDoQuarto') numeroDoQuarto: number,
+  ): Promise<Quarto> {
+    return this.quartosService.updateOne({ numeroDoQuarto: numeroDoQuarto });
+  }
+
+  @Delete('quarto/:id')
+  async deleteByID(@Param('id') id: number): Promise<Quarto> {
+    return this.quartosService.deleteById({ id: id });
   }
 }

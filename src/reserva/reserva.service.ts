@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
 import { PrismaService } from 'src/database/PrismaService';
+import { ReservaCreateRequest } from './dto/create.reserva.request';
+import { ReservaUpdateRequest } from './dto/update.reserva.request';
 
 @Injectable()
 export class ReservaService {
@@ -9,7 +11,7 @@ export class ReservaService {
   async create(reserva: Prisma.ReservaCreateInput): Promise<Reserva> {
     this.verificaDatas(reserva);
 
-    const quartoEncontrado = await this.prisma.quarto.findFirst({
+    const quartoEncontrado = await this.prisma.quarto.findUnique({
       where: {
         id: reserva.Quarto.connect.id,
       },
@@ -31,53 +33,72 @@ export class ReservaService {
     });
   }
 
-  // --------------------------------------------------------------------------
-
-  async deleteById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
-    const reservaID = await this.prisma.reserva.findUnique({
-      where: reserva,
-    });
-
-    if (!reservaID) {
-      throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
-    }
-
-    const reservaDeletada = await this.prisma.reserva.delete({
-      where: {
-        id: reservaID.id,
-      },
-    });
-
-    return reservaDeletada;
-  }
-
-  // --------------------------------------------------------------------------
-
   async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
-    const reservaUnica = await this.prisma.reserva.findUnique({
+    const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: reserva,
     });
 
-    if (!reservaUnica) {
+    if (!reservaEncontrada) {
       throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
     }
 
-    return reservaUnica;
+    return reservaEncontrada;
   }
-
-  // --------------------------------------------------------------------------
 
   async findMany(): Promise<Reserva[]> {
     const todasReservas = await this.prisma.reserva.findMany();
+
     if (todasReservas.length === 0) {
       throw new HttpException('', HttpStatus.NO_CONTENT);
     }
     return todasReservas;
   }
 
+  async updateById(
+    reserva: Prisma.ReservaWhereUniqueInput,
+    reservaAtualizada: Prisma.ReservaUpdateInput,
+  ): Promise<Reserva> {
+    this.verificaDatas(reservaAtualizada);
+
+    const reservaEncontrada = await this.prisma.reserva.findUnique({
+      where: {
+        id: reserva.id,
+      },
+    });
+
+    if(!reservaEncontrada)
+
+    return this.prisma.reserva.update({
+      where: {
+        id: reservaEncontrada.id,
+      },
+      data: reservaAtualizada,
+    });
+  }
+
+  async deleteById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
+    const reservaEncontrada = await this.prisma.reserva.findUnique({
+      where: reserva,
+    });
+
+    if (!reservaEncontrada) {
+      throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    const reservaDeletada = await this.prisma.reserva.delete({
+      where: {
+        id: reservaEncontrada.id,
+      },
+    });
+
+    return reservaDeletada;
+  }
+
   // ===================================== metodos do negocio =====================================
 
-  private verificaDatas(reserva: Prisma.ReservaCreateInput) {
+  private verificaDatas(
+    reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
+  ) {
     if (this.diasEntre(reserva.dataReserva) > 30) {
       throw new HttpException(
         'Não é possivel fazer uma reserva com mais de 30 dias de antecedência',
@@ -100,18 +121,17 @@ export class ReservaService {
     this.fazCheckinECheckout(reserva);
   }
 
-  // --------------------------------------------------------------------------
-
-  private fazCheckinECheckout(reserva: Prisma.ReservaCreateInput) {
-    let covertidoParaData = new Date(reserva.dataReserva);
+  private fazCheckinECheckout(
+    reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
+  ) {
+    let covertidoParaData = new Date(reserva.dataReserva.toString());
+    let estadiaNumero = <number>reserva.tempoEstadia;
 
     reserva.checkin = new Date(
       covertidoParaData.setDate(covertidoParaData.getDate() + 1),
     );
     reserva.checkout = new Date(
-      covertidoParaData.setDate(
-        covertidoParaData.getDate() + reserva.tempoEstadia,
-      ),
+      covertidoParaData.setDate(covertidoParaData.getDate() + estadiaNumero),
     );
   }
 
@@ -123,9 +143,9 @@ export class ReservaService {
       );
   }
 
-  // --------------------------------------------------------------------------
-
-  private diasEntre(dataReserva: Date | string): number {
+  private diasEntre(
+    dataReserva: string | Date | Prisma.DateTimeFieldUpdateOperationsInput,
+  ): number {
     const dataAtual = new Date();
 
     let contador;

@@ -42,17 +42,17 @@ export class UsuariosService {
 
   async deleteById(usuario: Prisma.UsuarioWhereUniqueInput): Promise<Usuario> {
     const usuarioID = await this.prisma.usuario.findUnique({
-      where: usuario
-    })
+      where: usuario,
+    });
 
-    if(!usuarioID) {
-      throw new HttpException("Usuario não encontrado", HttpStatus.NOT_FOUND);
+    if (!usuarioID) {
+      throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND);
     }
 
     return this.prisma.usuario.delete({
       where: {
-        id: usuario.id
-      }
-    })
+        id: usuario.id,
+      },
+    });
   }
 }

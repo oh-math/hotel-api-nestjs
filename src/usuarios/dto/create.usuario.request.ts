@@ -9,4 +9,4 @@ export class UsuarioRequest {
   @IsString()
   @Length(11)
   cpf: string;
-};
+}

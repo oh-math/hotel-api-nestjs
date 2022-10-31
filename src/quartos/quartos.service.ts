@@ -28,15 +28,33 @@ export class QuartosService {
     return this.prisma.quarto.findMany();
   }
 
-  async updateOne(
-    data: Prisma.QuartoWhereUniqueInput,
-  ): Promise<Quarto> {
+  async updateOne(quarto: Prisma.QuartoWhereUniqueInput): Promise<Quarto> {
+    const numeroQuarto = await this.prisma.quarto.findUniqueOrThrow({
+      where: quarto,
+    });
+
     return this.prisma.quarto.update({
       where: {
-        id: data.id,
+        numeroDoQuarto: numeroQuarto.numeroDoQuarto,
       },
       data: {
         disponibilidade: true,
+      },
+    });
+  }
+
+  async deleteById(quarto: Prisma.QuartoWhereUniqueInput): Promise<Quarto> {
+    const quartoID = await this.prisma.quarto.findUnique({
+      where: quarto,
+    });
+
+    if (!quartoID) {
+      throw new HttpException('Quarto não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    return this.prisma.quarto.delete({
+      where: {
+        id: quartoID.id,
       },
     });
   }
