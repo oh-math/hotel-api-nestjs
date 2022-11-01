@@ -1,19 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
+import { plainToClass } from 'class-transformer';
+import { randomBytes, randomInt, randomUUID } from 'crypto';
 import { PrismaService } from 'src/database/PrismaService';
-import { ReservaCreateRequest } from './dto/create.reserva.request';
+import { CreateReservaRequest } from './dto/create.reserva.request';
 import { ReservaUpdateRequest } from './dto/update.reserva.request';
 
 @Injectable()
 export class ReservaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(reserva: Prisma.ReservaCreateInput): Promise<Reserva> {
+  async create(reserva: CreateReservaRequest): Promise<CreateReservaRequest> {
     this.verificaDatas(reserva);
 
     const quartoEncontrado = await this.prisma.quarto.findUnique({
       where: {
-        id: reserva.Quarto.connect.id,
+        id: reserva.quartoId,
       },
     });
 
@@ -21,16 +23,18 @@ export class ReservaService {
 
     await this.prisma.quarto.update({
       where: {
-        id: reserva.Quarto.connect.id,
+        id: reserva.quartoId,
       },
       data: {
         disponibilidade: false,
       },
     });
 
-    return this.prisma.reserva.create({
+    const reservaCriada = await this.prisma.reserva.create({
       data: reserva,
     });
+
+    return plainToClass(CreateReservaRequest, reservaCriada);
   }
 
   async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
@@ -66,14 +70,13 @@ export class ReservaService {
       },
     });
 
-    if(!reservaEncontrada)
-
-    return this.prisma.reserva.update({
-      where: {
-        id: reservaEncontrada.id,
-      },
-      data: reservaAtualizada,
-    });
+    if (!reservaEncontrada)
+      return this.prisma.reserva.update({
+        where: {
+          id: reservaEncontrada.id,
+        },
+        data: reservaAtualizada,
+      });
   }
 
   async deleteById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
