@@ -11,7 +11,7 @@ A API por hora não possui segurança.
 - Prisma como ORM
 - NPM como gerenciador de dependências
 
-## A arquitetura usada 
+## Arquitetura usada 
 
 A arquitetura usada é a padrão de uso do NestJS, com a separação de entidades pelos seus módulos.
 
