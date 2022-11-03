@@ -25,18 +25,14 @@ A arquitetura usada é a padrão de uso do NestJS, com a separação de entidade
 
 `2. Criando container docker`
 
+    docker-compose up
 
 `3. Iniciando migração`
 
-    npm run migrate [comentário]
+    npm run migrate
 
 `4. Iniciando aplicação`
     
     npm run start
-
-
-`4.1 Iniciando aplicação com refresh automático`
-
-    npm run start:dev
 
 
