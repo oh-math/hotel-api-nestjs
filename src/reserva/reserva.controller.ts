@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { Reserva } from '@prisma/client';
-import { ReservaCreateRequest } from './dto/create.reserva.request';
+import { CreateReservaRequest } from './dto/create.reserva.request';
 import { ReservaUpdateRequest } from './dto/update.reserva.request';
 import { ReservaService } from './reserva.service';
 
@@ -17,24 +17,26 @@ export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
   @Post('reserva')
-  async create(@Body() reservaDTO: ReservaCreateRequest): Promise<Reserva> {
-    const { tempoEstadia, reserva, idUsuario, idQuarto } = reservaDTO;
+  async create(@Body() reservaDTO: CreateReservaRequest) {
+    // const { tempoEstadia, reserva, idUsuario, idQuarto } = reservaDTO;
 
-    const dataReserva = new Date(reserva);
-    return this.reservaService.create({
-      tempoEstadia,
-      dataReserva,
-      Usuario: {
-        connect: {
-          id: idUsuario,
-        },
-      },
-      Quarto: {
-        connect: {
-          id: idQuarto,
-        },
-      },
-    });
+    // const dataReserva = new Date(reserva);
+    // return this.reservaService.create({
+    //   tempoEstadia,
+    //   dataReserva,
+    //   Usuario: {
+    //     connect: {
+    //       id: idUsuario,
+    //     },
+    //   },
+    //   Quarto: {
+    //     connect: {
+    //       id: idQuarto,
+    //     },
+    //   },
+    // });
+
+    return
   }
 
   @Get('reserva/:id')

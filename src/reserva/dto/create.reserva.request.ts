@@ -1,16 +1,35 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsInt,
+  IsNotEmpty
+} from 'class-validator';
 
-export class ReservaCreateRequest {
+export class CreateReservaRequest {
+  constructor(partial?: Partial<CreateReservaRequest>) {
+    Object.assign(this, partial);
+  }
+
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   tempoEstadia: number;
   @IsNotEmpty()
-  @IsString()
-  reserva: string;
+  @IsDateString()
+  dataReserva: Date;
   @IsNotEmpty()
-  @IsNumber()
-  idUsuario: number;
+  @IsInt()
+  quartoId: number;
   @IsNotEmpty()
-  @IsNumber()
-  idQuarto: number;
+  @IsInt()
+  usuarioId: number;
 }
+
+// (alias) type Reserva = {
+//   id: number;
+//   tempoEstadia: number;
+//   dataReserva: Date;
+//   checkin: Date | null;
+//   checkout: Date | null;
+//   quartoId: number;
+//   usuarioId: number;
+// }
+// import Reserva
