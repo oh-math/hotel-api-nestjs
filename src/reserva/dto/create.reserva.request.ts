@@ -14,7 +14,7 @@ export class CreateReservaRequest {
   tempoEstadia: number;
   @IsNotEmpty()
   @IsDateString()
-  dataReserva: Date;
+  reserva: string;
   @IsNotEmpty()
   @IsInt()
   quartoId: number;
@@ -22,14 +22,3 @@ export class CreateReservaRequest {
   @IsInt()
   usuarioId: number;
 }
-
-// (alias) type Reserva = {
-//   id: number;
-//   tempoEstadia: number;
-//   dataReserva: Date;
-//   checkin: Date | null;
-//   checkout: Date | null;
-//   quartoId: number;
-//   usuarioId: number;
-// }
-// import Reserva

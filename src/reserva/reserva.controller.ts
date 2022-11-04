@@ -18,23 +18,23 @@ export class ReservaController {
 
   @Post('reserva')
   async create(@Body() reservaDTO: CreateReservaRequest) {
-    // const { tempoEstadia, reserva, idUsuario, idQuarto } = reservaDTO;
+    const { tempoEstadia, reserva, usuarioId, quartoId } = reservaDTO;
 
-    // const dataReserva = new Date(reserva);
-    // return this.reservaService.create({
-    //   tempoEstadia,
-    //   dataReserva,
-    //   Usuario: {
-    //     connect: {
-    //       id: idUsuario,
-    //     },
-    //   },
-    //   Quarto: {
-    //     connect: {
-    //       id: idQuarto,
-    //     },
-    //   },
-    // });
+    const dataReserva = new Date(reserva);
+    return this.reservaService.create({
+      tempoEstadia,
+      dataReserva,
+      Usuario: {
+        connect: {
+          id: usuarioId,
+        },
+      },
+      Quarto: {
+        connect: {
+          id: quartoId,
+        },
+      },
+    });
 
     return
   }

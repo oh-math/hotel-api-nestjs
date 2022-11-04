@@ -10,12 +10,12 @@ import { ReservaUpdateRequest } from './dto/update.reserva.request';
 export class ReservaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(reserva: CreateReservaRequest): Promise<CreateReservaRequest> {
+  async create(reserva: Prisma.ReservaCreateInput): Promise<CreateReservaRequest> {
     this.verificaDatas(reserva);
 
     const quartoEncontrado = await this.prisma.quarto.findUnique({
       where: {
-        id: reserva.quartoId,
+        id: reserva.Quarto.connect.id,
       },
     });
 
@@ -23,7 +23,7 @@ export class ReservaService {
 
     await this.prisma.quarto.update({
       where: {
-        id: reserva.quartoId,
+        id: reserva.Quarto.connect.id,
       },
       data: {
         disponibilidade: false,
