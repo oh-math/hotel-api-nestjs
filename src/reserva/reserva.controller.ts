@@ -35,8 +35,6 @@ export class ReservaController {
         },
       },
     });
-
-    return
   }
 
   @Get('reserva/:id')

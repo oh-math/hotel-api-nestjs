@@ -1,16 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto, Reserva } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { randomBytes, randomInt, randomUUID } from 'crypto';
+import { DateTime, Interval } from 'luxon';
+import { interval } from 'rxjs';
 import { PrismaService } from 'src/database/PrismaService';
 import { CreateReservaRequest } from './dto/create.reserva.request';
-import { ReservaUpdateRequest } from './dto/update.reserva.request';
 
 @Injectable()
 export class ReservaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(reserva: Prisma.ReservaCreateInput): Promise<CreateReservaRequest> {
+  async create(
+    reserva: Prisma.ReservaCreateInput,
+  ): Promise<CreateReservaRequest> {
     this.verificaDatas(reserva);
 
     const quartoEncontrado = await this.prisma.quarto.findUnique({
@@ -102,12 +104,19 @@ export class ReservaService {
   private verificaDatas(
     reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
   ) {
-    if (this.diasEntre(reserva.dataReserva) > 30) {
+    const dataAtual = DateTime.now();
+    const reservaDataConvertida = new Date(reserva.dataReserva.toString());
+    const intervalo = Interval.fromDateTimes(
+      dataAtual,
+      reservaDataConvertida,
+    ).length('day');
+
+    if (intervalo > 30) {
       throw new HttpException(
         'Não é possivel fazer uma reserva com mais de 30 dias de antecedência',
         HttpStatus.BAD_REQUEST,
       );
-    } else if (this.diasEntre(reserva.dataReserva) < 0) {
+    } else if (isNaN(intervalo)) {
       throw new HttpException(
         'Não é possivel fazer uma reserva no passado ou do dia atual',
         HttpStatus.BAD_REQUEST,
@@ -144,24 +153,5 @@ export class ReservaService {
         'O quarto está indisponivel',
         HttpStatus.BAD_REQUEST,
       );
-  }
-
-  private diasEntre(
-    dataReserva: string | Date | Prisma.DateTimeFieldUpdateOperationsInput,
-  ): number {
-    const dataAtual = new Date();
-
-    let contador;
-
-    if (dataReserva >= dataAtual) {
-      for (contador = 0; dataReserva >= dataAtual; contador++) {
-        dataAtual.setDate(dataAtual.getDate() + 1);
-      }
-    } else if (dataReserva < dataAtual) {
-      for (contador = 0; dataReserva < dataAtual; contador += -1) {
-        dataAtual.setDate(dataAtual.getDate() - 1);
-      }
-    }
-    return contador;
   }
 }
