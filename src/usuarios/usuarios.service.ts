@@ -23,9 +23,7 @@ export class UsuariosService {
       where: usuarioUnico,
     });
 
-    if (!usuario) {
-      throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND);
-    }
+    this.verificaUsuario(usuario);
 
     return usuario;
   }
@@ -45,14 +43,17 @@ export class UsuariosService {
       where: usuario,
     });
 
-    if (!usuarioID) {
-      throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND);
-    }
+    this.verificaUsuario(usuarioID);
 
     return this.prisma.usuario.delete({
       where: {
         id: usuario.id,
       },
     });
+  }
+
+  private verificaUsuario(usuario: Usuario) {
+    if (!usuario)
+      throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND);
   }
 }

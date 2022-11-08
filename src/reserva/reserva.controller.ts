@@ -17,7 +17,7 @@ export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
   @Post('reserva')
-  async create(@Body() reservaDTO: CreateReservaRequest) {
+  async create(@Body() reservaDTO: CreateReservaRequest): Promise<Reserva> {
     const { tempoEstadia, reserva, usuarioId, quartoId } = reservaDTO;
 
     const dataReserva = new Date(reserva);
