@@ -51,7 +51,7 @@ export class ReservaService {
     const todasReservas = await this.prisma.reserva.findMany();
 
     if (todasReservas.length === 0) {
-      throw new HttpException('', HttpStatus.NO_CONTENT);
+      throw new HttpException('Não existem reservas a serem exibidas', HttpStatus.NO_CONTENT);
     }
     return todasReservas;
   }
@@ -91,7 +91,7 @@ export class ReservaService {
     });
   }
 
-  // ===================================== metodos do negocio =====================================
+  // ===================================== Métodos do negócio =====================================
 
   private verificaDatas(
     reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,

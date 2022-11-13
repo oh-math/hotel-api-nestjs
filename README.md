@@ -19,13 +19,14 @@ A arquitetura usada é a padrão de uso do NestJS, com a separação de entidade
 
 ### Rodando o projeto localmente
 
-`1. Instalando dependências`
 
-    npm install
-
-`2. Criando container docker`
+`1. Criando container docker`
 
     docker-compose up
+
+`2. Instalando dependências`
+
+    npm install
 
 `3. Iniciando migração`
 
