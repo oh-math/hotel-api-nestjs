@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma, Reserva } from '@prisma/client';
+import { Prisma, Quarto, Reserva } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { randomBytes } from 'crypto';
 import moment from 'moment';
@@ -20,7 +20,7 @@ export class ReservaService {
       },
     });
 
-    if (!quartoEncontrado) {
+    if (!quartoEncontrado.disponibilidade) {
       throw new HttpException(
         'O quarto está indisponivel',
         HttpStatus.BAD_REQUEST,
@@ -51,17 +51,19 @@ export class ReservaService {
     return plainToInstance(ReservaResponse, novaReserva);
   }
 
-  async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
+  async findById(id: string): Promise<ReservaResponse> {
     const reservaEncontrada = await this.prisma.reserva.findUnique({
-      where: reserva,
+      where: {
+        id: Buffer.from(id, 'hex')
+      },
     });
 
     this.verificaReserva(reservaEncontrada);
 
-    return reservaEncontrada;
+    return plainToInstance(ReservaResponse, reservaEncontrada);
   }
 
-  async findMany(): Promise<Reserva[]> {
+  async findMany(): Promise<ReservaResponse[]> {
     const todasReservas = await this.prisma.reserva.findMany();
 
     if (todasReservas.length === 0) {
@@ -70,7 +72,7 @@ export class ReservaService {
         HttpStatus.NO_CONTENT,
       );
     }
-    return todasReservas;
+    return plainToInstance(ReservaResponse, todasReservas);
   }
 
   async updateById(
@@ -94,7 +96,7 @@ export class ReservaService {
       });
   }
 
-  async deleteById(id: string): Promise<Reserva> {
+  async deleteById(id: string): Promise<ReservaResponse> {
     const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: {
         id: Buffer.from(id, 'hex'),
@@ -103,11 +105,13 @@ export class ReservaService {
 
     this.verificaReserva(reservaEncontrada);
 
-    return await this.prisma.reserva.delete({
+    const reservaDeletada = await this.prisma.reserva.delete({
       where: {
         id: reservaEncontrada.id,
       },
     });
+
+    return plainToInstance(ReservaResponse, reservaDeletada)
   }
 
   // ===================================== Métodos do negócio =====================================
