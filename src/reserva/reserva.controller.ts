@@ -17,48 +17,33 @@ export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
   @Post('reserva')
-  async create(@Body() reservaDTO: CreateReservaRequest): Promise<Reserva> {
-    const { tempoEstadia, reserva, usuarioId, quartoId } = reservaDTO;
+  async create(@Body() reservaDTO: CreateReservaRequest) {
 
-    const dataReserva = new Date(reserva);
-    return this.reservaService.create({
-      tempoEstadia,
-      dataReserva,
-      Usuario: {
-        connect: {
-          id: usuarioId,
-        },
-      },
-      Quarto: {
-        connect: {
-          id: quartoId,
-        },
-      },
-    });
+    return this.reservaService.create(reservaDTO);
   }
 
-  @Get('reserva/:id')
-  async findById(@Param('id') id: number): Promise<Reserva> {
-    return this.reservaService.findById({ id: id });
-  }
+  // @Get('reserva/:id')
+  // async findById(@Param('id') id: number): Promise<Reserva> {
+  //   return this.reservaService.findById({ id: id });
+  // }
 
   @Get('reserva')
   async findMany(): Promise<Reserva[]> {
     return this.reservaService.findMany();
   }
 
-  @Patch('reserva/:id')
-  async updateByID(
-    @Param('id') id: number,
-    @Body()
-    reservaDTO: ReservaUpdateRequest,
-  ): Promise<Reserva> {
-    reservaDTO.dataReserva = new Date(reservaDTO.dataReserva);
-    return this.reservaService.updateById({ id: id }, reservaDTO);
-  }
+  // @Patch('reserva/:id')
+  // async updateByID(
+  //   @Param('id') id: number,
+  //   @Body()
+  //   reservaDTO: ReservaUpdateRequest,
+  // ): Promise<Reserva> {
+  //   reservaDTO.dataReserva = new Date(reservaDTO.dataReserva);
+  //   return this.reservaService.updateById({ id: id }, reservaDTO);
+  // }
 
   @Delete('reserva/:id')
-  async deleteById(@Param('id') id: number): Promise<Reserva> {
-    return this.reservaService.deleteById({ id: id });
+  async deleteById(@Param('id') id: string): Promise<Reserva> {
+    return this.reservaService.deleteById(id);
   }
 }

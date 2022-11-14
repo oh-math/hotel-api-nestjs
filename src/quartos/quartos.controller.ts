@@ -17,18 +17,14 @@ export class QuartosController {
   constructor(private readonly quartosService: QuartosService) {}
 
   @Post('quarto')
-  async create(@Body() quarto: CreateQuartoRequest): Promise<Quarto> {
-    const { numeroDoQuarto } = quarto;
-
-    return this.quartosService.create({
-      numeroDoQuarto,
-    });
+  async create(@Body() quarto: CreateQuartoRequest) {
+    return this.quartosService.create(quarto);
   }
 
-  @Get('quarto/:id')
-  async findByID(@Param('id') id: number): Promise<Quarto> {
-    return this.quartosService.findById({ id: id });
-  }
+  // @Get('quarto/:id')
+  // async findByID(@Param('id') id: number): Promise<Quarto> {
+  //   return this.quartosService.findById({ id: id });
+  // }
 
   @Get('quarto')
   async findMany(): Promise<Quarto[]> {
@@ -42,8 +38,8 @@ export class QuartosController {
     return this.quartosService.updateOne({ numeroDoQuarto: numeroDoQuarto });
   }
 
-  @Delete('quarto/:id')
-  async deleteByID(@Param('id') id: number): Promise<Quarto> {
-    return this.quartosService.deleteById({ id: id });
-  }
+  // @Delete('quarto/:id')
+  // async deleteByID(@Param('id') id: number): Promise<Quarto> {
+  //   return this.quartosService.deleteById({ id: id });
+  // }
 }

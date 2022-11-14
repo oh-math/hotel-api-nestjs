@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { Usuario } from '@prisma/client';
-import { UsuarioRequest } from './dto/create.usuario.request';
+import { CreateUsuarioRequest } from './dto/create.usuario.request';
 import { UsuariosService } from './usuarios.service';
 
 @Controller()
@@ -8,13 +8,13 @@ export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
   @Post('usuario')
-  async create(@Body() usuario: UsuarioRequest): Promise<Usuario> {
+  async create(@Body() usuario: CreateUsuarioRequest){
     return this.usuariosService.create(usuario);
   }
 
   @Get('usuario/:id')
-  async findById(@Param('id') id: number): Promise<Usuario> {
-    return this.usuariosService.findById({ id: id });
+  async findById(@Param('id') id): Promise<Usuario> {
+    return this.usuariosService.findById(id);
   }
 
   @Get('usuario')
@@ -23,7 +23,7 @@ export class UsuariosController {
   }
 
   @Delete('usuario/:id')
-  async deleteById(@Param('id') id: number): Promise<Usuario> {
-    return this.usuariosService.deleteById({ id: id });
+  async deleteById(@Param('id') id): Promise<Usuario> {
+    return this.usuariosService.deleteById(id);
   }
 }

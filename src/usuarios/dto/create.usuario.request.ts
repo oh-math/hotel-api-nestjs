@@ -1,6 +1,10 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
-export class UsuarioRequest {
+export class CreateUsuarioRequest {
+  constructor(partial?: Partial<CreateUsuarioRequest>) {
+    Object.assign(this, partial);
+  }
+
   @IsNotEmpty()
   @IsString()
   @Length(3, 147)

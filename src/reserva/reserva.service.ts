@@ -1,18 +1,33 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Reserva } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
+import { randomBytes } from 'crypto';
 import moment from 'moment';
 import { PrismaService } from 'src/database/PrismaService';
+import { CreateReservaRequest } from './dto/create.reserva.request';
+import { ReservaResponse } from './dto/reserva.response';
 
 @Injectable()
 export class ReservaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(reserva: Prisma.ReservaCreateInput): Promise<Reserva> {
-    this.verificaDatas(reserva);
+  async create(reserva: CreateReservaRequest): Promise<ReservaResponse> {
+    const reservaObj: { dataReserva; tempoEstadia; quartoId; usuarioId } =
+      reserva;
 
-    const quartoEncontrado = await this.prisma.quarto.findUnique({
+    const dataReserva = moment(<string>reserva.dataReserva);
+    const estadiaNumero = <number>reserva.tempoEstadia;
+
+    const checkin = (reserva.checkin = dataReserva.add(1, 'd').toDate());
+    const checkout = (reserva.checkout = dataReserva
+      .add(estadiaNumero, 'd')
+      .toDate());
+
+    this.verificaDatas(reservaObj);
+
+    const quartoEncontrado = await this.prisma.quarto.findFirst({
       where: {
-        id: reserva.Quarto.connect.id,
+        numeroDoQuarto: reserva.quartoId,
       },
     });
 
@@ -25,16 +40,26 @@ export class ReservaService {
 
     await this.prisma.quarto.update({
       where: {
-        id: reserva.Quarto.connect.id,
+        numeroDoQuarto: quartoEncontrado.numeroDoQuarto,
       },
       data: {
         disponibilidade: false,
       },
     });
 
-    return await this.prisma.reserva.create({
-      data: reserva,
+    const novaReserva = await this.prisma.reserva.create({
+      data: {
+        id: randomBytes(16),
+        dataReserva: new Date(reservaObj.dataReserva),
+        tempoEstadia: reservaObj.tempoEstadia,
+        quartoId: reservaObj.quartoId,
+        usuarioId: reservaObj.usuarioId,
+        checkin: checkin,
+        checkout: checkout,
+      },
     });
+
+    return plainToInstance(ReservaResponse, novaReserva);
   }
 
   async findById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
@@ -51,7 +76,10 @@ export class ReservaService {
     const todasReservas = await this.prisma.reserva.findMany();
 
     if (todasReservas.length === 0) {
-      throw new HttpException('Não existem reservas a serem exibidas', HttpStatus.NO_CONTENT);
+      throw new HttpException(
+        'Não existem reservas a serem exibidas',
+        HttpStatus.NO_CONTENT,
+      );
     }
     return todasReservas;
   }
@@ -77,9 +105,11 @@ export class ReservaService {
       });
   }
 
-  async deleteById(reserva: Prisma.ReservaWhereUniqueInput): Promise<Reserva> {
+  async deleteById(id: string): Promise<Reserva> {
     const reservaEncontrada = await this.prisma.reserva.findUnique({
-      where: reserva,
+      where: {
+        id: Buffer.from(id, 'hex'),
+      },
     });
 
     this.verificaReserva(reservaEncontrada);
@@ -94,7 +124,7 @@ export class ReservaService {
   // ===================================== Métodos do negócio =====================================
 
   private verificaDatas(
-    reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
+    reserva: CreateReservaRequest | Prisma.ReservaUpdateInput,
   ) {
     const dataAtual = moment(new Date());
     const dataReserva = moment(reserva.dataReserva.toString());
@@ -118,18 +148,18 @@ export class ReservaService {
       );
     }
 
-    this.fazCheckinECheckout(reserva);
+    // this.fazCheckinECheckout(reserva);
   }
 
-  private fazCheckinECheckout(
-    reserva: Prisma.ReservaCreateInput | Prisma.ReservaUpdateInput,
-  ) {
-    let dataReserva = moment(<string>reserva.dataReserva);
-    let estadiaNumero = <number>reserva.tempoEstadia;
+  // private fazCheckinECheckout(
+  //   reserva: CreateReservaRequest | Prisma.ReservaUpdateInput,
+  // ) {
+  //   let dataReserva = moment(<string>reserva.dataReserva);
+  //   let estadiaNumero = <number>reserva.tempoEstadia;
 
-    reserva.checkin = dataReserva.add(1, 'd').toDate();
-    reserva.checkout = dataReserva.add(estadiaNumero, 'd').toDate();
-  }
+  //   reserva.checkin = dataReserva.add(1, 'd').toDate();
+  //   reserva.checkout = dataReserva.add(estadiaNumero, 'd').toDate();
+  // }
 
   private verificaReserva(reservaEncontrada: Reserva) {
     if (!reservaEncontrada)

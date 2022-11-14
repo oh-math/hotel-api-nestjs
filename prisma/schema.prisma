@@ -11,21 +11,21 @@ datasource db {
 }
 
 model Reserva {
-  id           Int       @id @default(autoincrement())
+  id           Bytes     @id @db.Binary(16)
   tempoEstadia Int
   dataReserva  DateTime
   checkin      DateTime?
   checkout     DateTime?
-  Usuario      Usuario   @relation(fields: [usuarioId], references: [id])
-  Quarto       Quarto    @relation(fields: [quartoId], references: [id])
-  quartoId     Int       @unique
-  usuarioId    Int       @unique
+  Usuario      Usuario   @relation(fields: [usuarioId], references: [cpf])
+  Quarto       Quarto    @relation(fields: [quartoId], references: [numeroDoQuarto])
+  usuarioId    String     @unique @db.VarChar(11)
+  quartoId     Int     @unique
 
   @@map("reservas")
 }
 
 model Quarto {
-  id              Int      @id @default(autoincrement())
+  id              Bytes    @id @db.Binary(16)
   disponibilidade Boolean? @default(true)
   numeroDoQuarto  Int      @unique
   reserva         Reserva?
@@ -34,7 +34,7 @@ model Quarto {
 }
 
 model Usuario {
-  id      Int      @id @default(autoincrement())
+  id      Bytes    @id @db.Binary(16)
   nome    String   @db.VarChar(147)
   cpf     String   @unique @db.VarChar(11)
   reserva Reserva?

@@ -1,15 +1,24 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, Quarto } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
+import { randomBytes } from 'crypto';
 import { PrismaService } from 'src/database/PrismaService';
+import { CreateQuartoRequest } from './dto/create.quartos.request';
+import { QuartoResponse } from './dto/quarto.response';
 
 @Injectable()
 export class QuartosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.QuartoCreateInput): Promise<Quarto> {
-    return this.prisma.quarto.create({
-      data,
+  async create(quarto: CreateQuartoRequest): Promise<QuartoResponse> {
+    const novoQuarto = await this.prisma.quarto.create({
+      data: {
+        id: randomBytes(16),
+        ...quarto
+      }
     });
+
+    return plainToInstance(QuartoResponse, novoQuarto)
   }
 
   async findById(quartoUnico: Prisma.QuartoWhereUniqueInput): Promise<Quarto> {
