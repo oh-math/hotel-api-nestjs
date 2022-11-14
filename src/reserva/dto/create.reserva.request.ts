@@ -1,7 +1,8 @@
 import {
-  IsDateString, IsInt,
   IsNotEmpty,
-  IsOptional
+  IsNumber,
+  IsOptional,
+  IsString
 } from 'class-validator';
 
 export class CreateReservaRequest {
@@ -9,15 +10,15 @@ export class CreateReservaRequest {
     Object.assign(this, partial);
   }
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   tempoEstadia: number;
   @IsNotEmpty()
-  @IsDateString()
+  @IsString()
   dataReserva: string;
   @IsOptional()
-  checkin?: Date
+  checkin?: Date;
   @IsOptional()
-  checkout?: Date
+  checkout?: Date;
   @IsNotEmpty()
   quartoId: number;
   @IsNotEmpty()

@@ -1,6 +1,10 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class ReservaUpdateRequest {
+export class UpdateReservaRequest {
+  constructor(partial?: Partial<UpdateReservaRequest>) {
+    Object.assign(this, partial);
+  }
+
   @IsOptional()
   @IsNotEmpty()
   @IsNumber()
@@ -9,4 +13,8 @@ export class ReservaUpdateRequest {
   @IsNotEmpty()
   @IsString()
   dataReserva?: string | Date;
+  @IsOptional()
+  checkin?: Date;
+  @IsOptional()
+  checkout?: Date;
 }

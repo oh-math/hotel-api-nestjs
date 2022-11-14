@@ -10,22 +10,16 @@ export class ReservaResponse {
     Buffer.isBuffer(value) ? Buffer.from(value).toString('hex') : value,
   )
   id: string;
-
   @Expose()
   tempoEstadia: number;
-
   @Expose()
   dataReserva: string;
-
   @Expose()
   checkin?: Date;
-
   @Expose()
   checkout?: Date;
-
   @Expose()
   quartoId: number;
-
   @Expose()
   usuarioId: string;
 }

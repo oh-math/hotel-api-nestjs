@@ -3,10 +3,13 @@ import {
   Controller,
   Delete,
   Get,
-  Param, Post
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { CreateReservaRequest } from './dto/create.reserva.request';
 import { ReservaResponse } from './dto/reserva.response';
+import { UpdateReservaRequest } from './dto/update.reserva.request';
 import { ReservaService } from './reserva.service';
 
 @Controller()
@@ -28,15 +31,14 @@ export class ReservaController {
     return this.reservaService.findMany();
   }
 
-  // @Patch('reserva/:id')
-  // async updateByID(
-  //   @Param('id') id: number,
-  //   @Body()
-  //   reservaDTO: ReservaUpdateRequest,
-  // ): Promise<Reserva> {
-  //   reservaDTO.dataReserva = new Date(reservaDTO.dataReserva);
-  //   return this.reservaService.updateById({ id: id }, reservaDTO);
-  // }
+  @Patch('reserva/:id')
+  async updateByID(
+    @Param('id') id: string,
+    @Body()
+    reservaDTO: UpdateReservaRequest,
+  ): Promise<ReservaResponse> {
+    return this.reservaService.updateById(id, reservaDTO);
+  }
 
   @Delete('reserva/:id')
   async deleteById(@Param('id') id: string): Promise<ReservaResponse> {

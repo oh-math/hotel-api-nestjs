@@ -6,6 +6,7 @@ import moment from 'moment';
 import { PrismaService } from 'src/database/PrismaService';
 import { CreateReservaRequest } from './dto/create.reserva.request';
 import { ReservaResponse } from './dto/reserva.response';
+import { UpdateReservaRequest } from './dto/update.reserva.request';
 
 @Injectable()
 export class ReservaService {
@@ -44,7 +45,7 @@ export class ReservaService {
         quartoId: reserva.quartoId,
         usuarioId: reserva.usuarioId,
         checkin: reserva.checkin,
-        checkout: reserva.checkout
+        checkout: reserva.checkout,
       },
     });
 
@@ -54,7 +55,7 @@ export class ReservaService {
   async findById(id: string): Promise<ReservaResponse> {
     const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: {
-        id: Buffer.from(id, 'hex')
+        id: Buffer.from(id, 'hex'),
       },
     });
 
@@ -76,24 +77,30 @@ export class ReservaService {
   }
 
   async updateById(
-    reserva: Prisma.ReservaWhereUniqueInput,
-    reservaAtualizada: Prisma.ReservaUpdateInput,
-  ): Promise<Reserva> {
-    this.verificaDatas(reservaAtualizada);
+    id: string,
+    reserva: UpdateReservaRequest,
+  ): Promise<ReservaResponse> {
+    this.verificaDatas(reserva);
 
     const reservaEncontrada = await this.prisma.reserva.findUnique({
       where: {
-        id: reserva.id,
+        id: Buffer.from(id, 'hex'),
       },
     });
 
-    if (!reservaEncontrada)
-      return this.prisma.reserva.update({
-        where: {
-          id: reservaEncontrada.id,
-        },
-        data: reservaAtualizada,
-      });
+    const reservaAtualizada = await this.prisma.reserva.update({
+      where: {
+        id: reservaEncontrada.id,
+      },
+      data: {
+        dataReserva: new Date(reserva.dataReserva),
+        tempoEstadia: reserva.tempoEstadia,
+        checkin: reserva.checkin,
+        checkout: reserva.checkout
+      },
+    });
+
+    return plainToInstance(ReservaResponse, reservaAtualizada)
   }
 
   async deleteById(id: string): Promise<ReservaResponse> {
@@ -111,7 +118,7 @@ export class ReservaService {
       },
     });
 
-    return plainToInstance(ReservaResponse, reservaDeletada)
+    return plainToInstance(ReservaResponse, reservaDeletada);
   }
 
   // ===================================== Métodos do negócio =====================================
