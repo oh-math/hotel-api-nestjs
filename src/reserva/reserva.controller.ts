@@ -18,7 +18,6 @@ export class ReservaController {
 
   @Post('reserva')
   async create(@Body() reservaDTO: CreateReservaRequest) {
-
     return this.reservaService.create(reservaDTO);
   }
 
