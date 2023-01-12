@@ -1,20 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma, Quarto, Reserva } from '@prisma/client';
+import { Prisma, Reserva } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { randomBytes } from 'crypto';
 import moment from 'moment';
 import { PrismaService } from 'src/database/PrismaService';
-import { CreateReservaRequest } from './dto/create.reserva.request';
-import { ReservaResponse } from './dto/reserva.response';
-import { UpdateReservaRequest } from './dto/update.reserva.request';
+import { CreateReservaRequest } from '../dto/create.reserva.request';
+import { ReservaResponse } from '../dto/reserva.response';
+import { UpdateReservaRequest } from '../dto/update.reserva.request';
 
 @Injectable()
 export class ReservaService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(reserva: CreateReservaRequest): Promise<ReservaResponse> {
-    this.verificaDatas(reserva);
-
     const quartoEncontrado = await this.prisma.quarto.findFirst({
       where: {
         numeroDoQuarto: reserva.quartoId,
@@ -67,12 +65,6 @@ export class ReservaService {
   async findMany(): Promise<ReservaResponse[]> {
     const todasReservas = await this.prisma.reserva.findMany();
 
-    if (todasReservas.length === 0) {
-      throw new HttpException(
-        'Não existem reservas a serem exibidas',
-        HttpStatus.NO_CONTENT,
-      );
-    }
     return plainToInstance(ReservaResponse, todasReservas);
   }
 
@@ -96,11 +88,11 @@ export class ReservaService {
         dataReserva: new Date(reserva.dataReserva),
         tempoEstadia: reserva.tempoEstadia,
         checkin: reserva.checkin,
-        checkout: reserva.checkout
+        checkout: reserva.checkout,
       },
     });
 
-    return plainToInstance(ReservaResponse, reservaAtualizada)
+    return plainToInstance(ReservaResponse, reservaAtualizada);
   }
 
   async deleteById(id: string): Promise<ReservaResponse> {

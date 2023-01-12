@@ -5,33 +5,35 @@ import {
   Get,
   Param,
   Patch,
-  Post,
+  Post
 } from '@nestjs/common';
-import { CreateReservaRequest } from './dto/create.reserva.request';
-import { ReservaResponse } from './dto/reserva.response';
-import { UpdateReservaRequest } from './dto/update.reserva.request';
-import { ReservaService } from './reserva.service';
-
-@Controller()
+import { CreateReservaRequest } from '../dto/create.reserva.request';
+import { ReservaResponse } from '../dto/reserva.response';
+import { UpdateReservaRequest } from '../dto/update.reserva.request';
+import { ValidateDataReservaPipe } from '../pipes/validate-data-reserva.pipe';
+import { ReservaService } from '../services/reserva.service';
+@Controller({
+  path: 'reservas'
+})
 export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
-  @Post('reserva')
-  async create(@Body() reservaDTO: CreateReservaRequest) {
+  @Post()
+  async create(@Body(ValidateDataReservaPipe) reservaDTO: CreateReservaRequest) {
     return this.reservaService.create(reservaDTO);
   }
 
-  @Get('reserva/:id')
+  @Get(':id')
   async findById(@Param('id') id: string): Promise<ReservaResponse> {
     return this.reservaService.findById(id);
   }
 
-  @Get('reserva')
+  @Get()
   async findMany(): Promise<ReservaResponse[]> {
     return this.reservaService.findMany();
   }
 
-  @Patch('reserva/:id')
+  @Patch(':id')
   async updateByID(
     @Param('id') id: string,
     @Body()
@@ -40,7 +42,7 @@ export class ReservaController {
     return this.reservaService.updateById(id, reservaDTO);
   }
 
-  @Delete('reserva/:id')
+  @Delete(':id')
   async deleteById(@Param('id') id: string): Promise<ReservaResponse> {
     return this.reservaService.deleteById(id);
   }

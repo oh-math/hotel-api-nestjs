@@ -13,6 +13,7 @@ export class QuartoResponse {
 
   @Expose()
   disponibilidade: boolean;
+
   @Expose()
   numeroDoQuarto: number;
 }
